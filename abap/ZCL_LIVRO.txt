@@ -1,0 +1,82 @@
+CLASS zcl_livro DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS constructor IMPORTING titulo TYPE char15
+                                  autor  TYPE char20
+                                  isbn   TYPE char10.
+
+    METHODS get_titulo RETURNING VALUE(return) TYPE char15.
+
+    METHODS get_autor RETURNING VALUE(return) TYPE char20.
+
+    METHODS get_isbn RETURNING VALUE(return) TYPE char10.
+
+    METHODS isEmprestado RETURNING VALUE(return) TYPE abap_bool.
+
+    METHODS marcarComoEmprestado IMPORTING emprestado TYPE abap_bool.
+
+    METHODS marcarComoDisponivel IMPORTING disponivel TYPE abap_bool.
+
+  PROTECTED SECTION.
+
+  PRIVATE SECTION.
+
+    DATA: titulo     TYPE char15,
+          autor      TYPE char20,
+          isbn       TYPE char10,
+          emprestado TYPE abap_bool.
+ENDCLASS.
+
+
+
+CLASS zcl_livro IMPLEMENTATION.
+
+  METHOD constructor.
+
+    me->titulo = titulo.
+    me->autor = autor.
+    me->isbn  = isbn.
+
+  ENDMETHOD.
+
+  METHOD get_titulo.
+
+    return = me->titulo.
+
+  ENDMETHOD.
+
+  METHOD get_autor.
+
+    return = me->autor.
+
+  ENDMETHOD.
+
+  METHOD get_isbn.
+
+    return = me->isbn.
+
+  ENDMETHOD.
+
+  METHOD isEmprestado.
+
+    return = me->emprestado.
+
+  ENDMETHOD.
+
+  METHOD marcarComoEmprestado.
+
+    me->emprestado = emprestado.
+
+  ENDMETHOD.
+
+  METHOD marcarComoDisponivel.
+
+    me->emprestado = disponivel.
+
+  ENDMETHOD.
+
+ENDCLASS.

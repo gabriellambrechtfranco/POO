@@ -1,0 +1,65 @@
+CLASS zcl_emprestimo DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS constructor IMPORTING livro  TYPE REF TO zcl_livro
+                                  leitor TYPE REF TO zcl_leitor.
+
+    METHODS get_livro RETURNING VALUE(return) TYPE REF TO zcl_livro.
+
+    METHODS get_leitor RETURNING VALUE(return) TYPE REF TO zcl_leitor.
+
+    METHODS get_dataEmprestimo RETURNING VALUE(return) TYPE datum.
+
+    METHODS get_dataDevolucaoPrevista RETURNING VALUE(return) TYPE datum.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+    DATA: livro                   TYPE REF TO zcl_livro,
+          leitor                  TYPE REF TO zcl_leitor,
+          data_emprestimo         TYPE datum,
+          data_devolucao_prevista TYPE datum.
+
+ENDCLASS.
+
+
+
+CLASS zcl_emprestimo IMPLEMENTATION.
+
+  METHOD constructor.
+
+    me->livro = livro.
+    me->leitor = leitor.
+    me->data_emprestimo = sy-datum.
+    me->data_devolucao_prevista = sy-datum + 14.
+
+  ENDMETHOD.
+
+  METHOD get_livro.
+
+    REturn = me->livro.
+
+  ENDMETHOD.
+
+  METHOD get_leitor.
+
+    REturn = me->leitor.
+
+  ENDMETHOD.
+
+  METHOD get_dataemprestimo.
+
+    REturn = data_emprestimo.
+
+  ENDMETHOD.
+
+  METHOD get_datadevolucaoprevista.
+
+    return = data_devolucao_prevista.
+
+  ENDMETHOD.
+
+ENDCLASS.

@@ -1,0 +1,100 @@
+CLASS zcl_main DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    CLASS-METHODS: main.
+
+    CLASS-METHODS: autenticarUsuario IMPORTING usuario TYPE REF TO zcl_usuario
+                                               senha   TYPE char10.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_main IMPLEMENTATION.
+
+
+  METHOD main.
+
+    DATA: leitor      TYPE REF TO zcl_usuario,
+          funcionario TYPE REF TO zcl_usuario.
+
+
+    leitor = NEW zcl_leitor( nome  = 'Ana'
+                             email = 'ana@email.com'
+                             senha = '1234' ).
+
+    funcionario = NEW zcl_funcionario( nome  = 'carlos'
+                                       email = 'carlos@email.com'
+                                       senha = 'abcd').
+
+    zcl_main=>autenticarUsuario( usuario = funcionario
+                                 senha = 'abcd' ).
+
+    zcl_main=>autenticarUsuario( usuario = leitor
+                                 senha = '1234' ).
+
+
+    IF ( funcionario->autenticar( 'abcd' ) = abap_true ).
+
+      DATA(livro1) = NEW zcl_livro(
+        titulo = 'Clean Code'
+        autor  = 'Robert C. Martin'
+        isbn   = '9780132'
+      ).
+
+      DATA(livro2) = NEW zcl_livro(
+        titulo = 'Java: Como'
+        autor  = 'Deitel'
+        isbn   = '97885760'
+      ).
+
+
+      DATA(func) = CAST zcl_funcionario( funcionario ).
+      DATA(l) = CAST zcl_leitor( leitor ).
+
+      func->realizaremprestimo(
+        EXPORTING
+          livro  = livro1
+          leitor = l
+      ).
+
+      func->realizaremprestimo(
+        EXPORTING
+          livro  = livro2
+          leitor = l
+      ).
+
+      WRITE |Livros emprestados para { leitor->get_nome(  ) }:|.
+      SKIP.
+
+
+      DATA: emprestimos TYPE zcl_leitor=>ty_emprestimos.
+
+      l->get_emprestimos( CHANGING emprestimos = emprestimos ).
+
+      LOOP AT emprestimos INTO DATA(emprestimo).
+        DATA(livro) = emprestimo->get_livro( ).
+        WRITE |{ livro->get_titulo( ) }|.
+        SKIP.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD autenticarUsuario.
+    IF ( usuario->autenticar( senha_informada = senha ) ).
+      WRITE |Login bem-sucedido para usuario { usuario->get_tipo_usuario( ) } |.
+      SKIP.
+    ELSE.
+      WRITE |Senha incorreta para usuario { usuario->get_tipo_usuario( ) } | .
+      SKIP.
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.

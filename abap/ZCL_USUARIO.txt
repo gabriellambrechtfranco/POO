@@ -1,0 +1,52 @@
+CLASS zcl_usuario DEFINITION ABSTRACT
+  PUBLIC
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS constructor IMPORTING nome  TYPE char20
+                                  email TYPE char30
+                                  senha TYPE char10.
+
+    METHODS autenticar IMPORTING senha_informada TYPE char10
+                       RETURNING VALUE(return)   TYPE abap_bool.
+
+    METHODS get_tipo_usuario ABSTRACT RETURNING VALUE(return) TYPE char20.
+
+    METHODS get_nome RETURNING VALUE(return) TYPE char20.
+
+  PROTECTED SECTION.
+    DATA: nome  TYPE char20,
+          email TYPE char30,
+          senha TYPE char10.
+
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zcl_usuario IMPLEMENTATION.
+
+  METHOD constructor.
+
+    me->nome = nome.
+    me->email = email.
+    me->senha = senha.
+
+  ENDMETHOD.
+
+  METHOD autenticar.
+
+    IF senha_informada = me->senha.
+      return = abap_true.
+    ELSE.
+      return = abap_false.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD get_nome.
+
+    return = me->nome.
+
+  ENDMETHOD.
+
+ENDCLASS.

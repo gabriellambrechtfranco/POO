@@ -1,0 +1,67 @@
+CLASS zcl_funcionario DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_usuario
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    METHODS constructor IMPORTING nome  TYPE char20
+                                  email TYPE char30
+                                  senha TYPE char10.
+
+    METHODS get_tipo_usuario REDEFINITION.
+
+    METHODS realizarEmprestimo IMPORTING livro  TYPE REF TO zcl_livro
+                                         leitor TYPE REF TO zcl_leitor.
+
+  PROTECTED SECTION.
+
+
+
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_funcionario IMPLEMENTATION.
+
+  METHOD get_tipo_usuario.
+
+    return = |Funcionário|.
+
+  ENDMETHOD.
+
+  METHOD constructor.
+
+    super->constructor(
+      EXPORTING
+        nome  = nome
+        email = email
+        senha = senha
+    ).
+
+  ENDMETHOD.
+
+  METHOD realizarEmprestimo.
+
+    IF ( ( NOT livro->isEmprestado( ) ) AND leitor->podeReceberEmprestimo( ) ).
+      DATA(emprestimo) = NEW zcl_emprestimo( livro  = livro
+                                             leitor = leitor ).
+      leitor->adicionaremprestimo( emprestimo = emprestimo ).
+      livro->marcarcomoemprestado( emprestado = abap_true ).
+      WRITE 'Empréstimo realizado com sucesso!'.
+      SKIP.
+    ELSE.
+      IF ( livro->isEmprestado( ) ).
+        WRITE 'Livro já está emprestado'.
+        SKIP.
+      ELSE.
+        WRITE 'Leitor atingiu o limite de empréstimos'.
+        SKIP.
+      ENDIF.
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.

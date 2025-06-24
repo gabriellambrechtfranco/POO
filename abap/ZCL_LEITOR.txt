@@ -1,0 +1,82 @@
+CLASS zcl_leitor DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_usuario
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    TYPES: ty_emprestimos TYPE TABLE OF REF TO zcl_emprestimo.
+
+    METHODS constructor IMPORTING nome  TYPE char20
+                                  email TYPE char30
+                                  senha TYPE char10.
+
+    METHODS get_tipo_usuario REDEFINITION.
+
+    METHODS get_emprestimos CHANGING emprestimos TYPE zcl_leitor=>ty_emprestimos.
+
+    METHODS podeReceberEmprestimo RETURNING VALUE(return) TYPE abap_bool.
+
+    METHODS adicionarEmprestimo IMPORTING emprestimo TYPE REF TO zcl_emprestimo.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+
+    DATA: emprestimos TYPE TABLE OF REF TO zcl_emprestimo.
+
+ENDCLASS.
+
+
+
+CLASS zcl_leitor IMPLEMENTATION.
+
+  METHOD constructor.
+
+    super->constructor(
+  EXPORTING
+    nome  = nome
+    email = email
+    senha = senha
+).
+
+  ENDMETHOD.
+
+  METHOD get_tipo_usuario.
+
+    return = |Leitor|.
+
+  ENDMETHOD.
+
+  METHOD get_emprestimos.
+
+    emprestimos = me->emprestimos.
+
+  ENDMETHOD.
+
+  METHOD podeReceberEmprestimo.
+
+    IF lines( me->emprestimos ) < 3.
+      return = abap_true.
+    ELSE.
+      return = abap_false.
+    ENDIF.
+
+  ENDMETHOD.
+
+  METHOD adicionaremprestimo.
+
+    IF me->podereceberemprestimo( ) = abap_true.
+
+      APPEND emprestimo TO emprestimos.
+
+    ELSE.
+
+      WRITE 'Leitor já atingiu o limite de empréstimos'.
+      skip.
+
+    ENDIF.
+
+  ENDMETHOD.
+
+ENDCLASS.
